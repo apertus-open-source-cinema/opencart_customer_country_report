@@ -25,12 +25,12 @@
 			<comment>Add Country link in menu under Reports -> Customers -> Country</comment>
 			<search regex="false">
 				<![CDATA[
-					<li><a href="<?php echo $report_customer_credit; ?>"><?php echo $text_report_customer_credit; ?></a></li>
+					&lt;li&gt;&lt;a href=&quot;&lt;?php echo $report_customer_credit; ?&gt;&quot;&gt;&lt;?php echo $text_report_customer_credit; ?&gt;&lt;/a&gt;&lt;/li&gt;
 				]]>
 			</search>
 			<add position="after">
 				<![CDATA[
-					<li><a href="<?php echo $report_customer_country; ?>"><?php echo $text_report_customer_country; ?></a></li>
+					&lt;li&gt;&lt;a href=&quot;&lt;?php echo $report_customer_country; ?&gt;&quot;&gt;&lt;?php echo $text_report_customer_country; ?&gt;&lt;/a&gt;&lt;/li&gt;
 				]]>
 			</add>
 		</operation>
