@@ -22,15 +22,15 @@
 	</file>
 	<file path="admin/view/template/common/menu.php">
 		<operation>
-			<comment>Add Country link in menu under Reports -> Customers -> Country</comment>
+			<comment>Add Country link in menu</comment>
 			<search regex="false">
 				<![CDATA[
-					&lt;li&gt;&lt;a href=&quot;&lt;?php echo $report_customer_credit; ?&gt;&quot;&gt;&lt;?php echo $text_report_customer_credit; ?&gt;&lt;/a&gt;&lt;/li&gt;
+					<?php echo $text_report_customer_credit; ?></a></li>
 				]]>
 			</search>
 			<add position="after">
 				<![CDATA[
-					&lt;li&gt;&lt;a href=&quot;&lt;?php echo $report_customer_country; ?&gt;&quot;&gt;&lt;?php echo $text_report_customer_country; ?&gt;&lt;/a&gt;&lt;/li&gt;
+					<li><a href="<?php echo $report_customer_credit; ?>"><?php echo $text_report_customer_credit; ?></a></li>
 				]]>
 			</add>
 		</operation>
@@ -56,30 +56,10 @@
 			<comment>add getCustomersCountry()</comment>
 			<search regex="false">
 				<![CDATA[
-					public function getTotalCustomersOnline($data = array()) {
-						$sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "customer_online` co LEFT JOIN " . DB_PREFIX . "customer c ON (co.customer_id = c.customer_id)";
-
-						$implode = array();
-
-						if (!empty($data['filter_ip'])) {
-							$implode[] = "co.ip LIKE '" . $this->db->escape($data['filter_ip']) . "'";
-						}
-
-						if (!empty($data['filter_customer'])) {
-							$implode[] = "co.customer_id > 0 AND CONCAT(c.firstname, ' ', c.lastname) LIKE '" . $this->db->escape($data['filter_customer']) . "'";
-						}
-
-						if ($implode) {
-							$sql .= " WHERE " . implode(" AND ", $implode);
-						}
-
-						$query = $this->db->query($sql);
-
-						return $query->row['total'];
-					}
+					public function getCustomerActivities($data = array()) {
 				]]>
 			</search>
-			<add position="after">
+			<add position="before">
 				<![CDATA[
 					public function getCustomersCountry($data = array()) {
 						$sql = "SELECT SUM(o.total) as total, COUNT(" . DB_PREFIX . "country.country_id) AS count, " . DB_PREFIX . "country.name from " . DB_PREFIX . "customer INNER JOIN " . DB_PREFIX . "address ON (" . DB_PREFIX . "customer.customer_id = " . DB_PREFIX . "address.customer_id) INNER JOIN " . DB_PREFIX . "country ON (" . DB_PREFIX . "address.country_id = " . DB_PREFIX . "country.country_id) INNER JOIN " . DB_PREFIX . "order o ON (o.customer_id=" . DB_PREFIX . "customer.customer_id)";
