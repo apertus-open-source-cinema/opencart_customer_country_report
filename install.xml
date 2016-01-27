@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>Customer Country Report</name>
+	<code>default</code>
+	<version>1.0</version>
+	<author>Sebastian Pichelhofer</author>
+	<link>https://github.com/apertus-open-source-cinema/opencart_customer_country_report</link>
+	<file path="admin/language/english/common/menu.php">
+		<operation>
+			<comment>Add Country language entry</comment>
+			<search regex="false">
+				<![CDATA[
+					$_['text_paypal_search']               = 'Search';
+				]]>
+			</search>
+			<add position="after">
+				<![CDATA[
+					$_['text_report_customer_country']      = 'Country';
+				]]>
+			</add>
+		</operation>
+	</file>
+	<file path="admin/view/template/common/menu.php">
+		<operation>
+			<comment>Add Country link in menu under Reports -> Customers -> Country</comment>
+			<search regex="false">
+				<![CDATA[
+					<li><a href="<?php echo $report_customer_credit; ?>"><?php echo $text_report_customer_credit; ?></a></li>
+				]]>
+			</search>
+			<add position="after">
+				<![CDATA[
+					<li><a href="<?php echo $report_customer_country; ?>"><?php echo $text_report_customer_country; ?></a></li>
+				]]>
+			</add>
+		</operation>
+	</file>
+	<file path="admin/controller/common/menu.php">
+		<operation>
+			<comment>set language strings/links</comment>
+			<search regex="false">
+				<![CDATA[
+					$data['text_openbay_order_import'] = $this->language->get('text_openbay_order_import');
+				]]>
+			</search>
+			<add position="after">
+				<![CDATA[
+					$data['text_report_customer_country'] = $this->language->get('text_report_customer_country');
+					$data['report_customer_country'] = $this->url->link('report/customer_country', 'token=' . $this->session->data['token'], 'SSL');
+				]]>
+			</add>
+		</operation>
+	</file>
+	<file path="admin/model/report/customers.php">
+				<operation>
+			<comment>add getCustomersCountry()</comment>
+			<search regex="false">
+				<![CDATA[
+					public function getTotalCustomersOnline($data = array()) {
+						$sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "customer_online` co LEFT JOIN " . DB_PREFIX . "customer c ON (co.customer_id = c.customer_id)";
+
+						$implode = array();
+
+						if (!empty($data['filter_ip'])) {
+							$implode[] = "co.ip LIKE '" . $this->db->escape($data['filter_ip']) . "'";
+						}
+
+						if (!empty($data['filter_customer'])) {
+							$implode[] = "co.customer_id > 0 AND CONCAT(c.firstname, ' ', c.lastname) LIKE '" . $this->db->escape($data['filter_customer']) . "'";
+						}
+
+						if ($implode) {
+							$sql .= " WHERE " . implode(" AND ", $implode);
+						}
+
+						$query = $this->db->query($sql);
+
+						return $query->row['total'];
+					}
+				]]>
+			</search>
+			<add position="after">
+				<![CDATA[
+					public function getCustomersCountry($data = array()) {
+						$sql = "SELECT SUM(o.total) as total, COUNT(" . DB_PREFIX . "country.country_id) AS count, " . DB_PREFIX . "country.name from " . DB_PREFIX . "customer INNER JOIN " . DB_PREFIX . "address ON (" . DB_PREFIX . "customer.customer_id = " . DB_PREFIX . "address.customer_id) INNER JOIN " . DB_PREFIX . "country ON (" . DB_PREFIX . "address.country_id = " . DB_PREFIX . "country.country_id) INNER JOIN " . DB_PREFIX . "order o ON (o.customer_id=" . DB_PREFIX . "customer.customer_id)";
+
+						if (!empty($data['filter_order_status_id'])) {
+							$sql .= " AND o.order_status_id = '" . (int)$data['filter_order_status_id'] . "'";
+						} else {
+							$sql .= " AND o.order_status_id > '0'";
+						}
+
+						if (!empty($data['filter_date_start'])) {
+							$sql .= " AND DATE(o.date_added) >= '" . $this->db->escape($data['filter_date_start']) . "'";
+						}
+
+						if (!empty($data['filter_date_end'])) {
+							$sql .= " AND DATE(o.date_added) <= '" . $this->db->escape($data['filter_date_end']) . "'";
+						}
+
+						if (isset($data['start']) || isset($data['limit'])) {
+							if ($data['start'] < 0) {
+								$data['start'] = 0;
+							}
+
+							if ($data['limit'] < 1) {
+								$data['limit'] = 20;
+							}
+
+							//$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+							$sql .= "GROUP BY " . DB_PREFIX . "country.country_id";
+						}
+
+						$query = $this->db->query($sql);
+
+						return $query->rows;
+					}
+				]]>
+			</add>
+		</operation>
+	</file>
+</modification>
