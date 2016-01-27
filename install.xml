@@ -20,7 +20,7 @@
 			</add>
 		</operation>
 	</file>
-	<file path="admin/view/template/common/menu.php">
+	<file path="admin/view/template/common/menu.tpl">
 		<operation>
 			<comment>Add Country link in menu</comment>
 			<search regex="false">
@@ -30,7 +30,7 @@
 			</search>
 			<add position="after">
 				<![CDATA[
-					<li><a href="<?php echo $report_customer_credit; ?>"><?php echo $text_report_customer_credit; ?></a></li>
+					<li><a href="<?php echo $report_customer_country; ?>"><?php echo $text_report_customer_country; ?></a></li>
 				]]>
 			</add>
 		</operation>
