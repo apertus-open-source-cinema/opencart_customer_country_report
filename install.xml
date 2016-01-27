@@ -51,7 +51,7 @@
 			</add>
 		</operation>
 	</file>
-	<file path="admin/model/report/customers.php">
+	<file path="admin/model/report/customer.php">
 				<operation>
 			<comment>add getCustomersCountry()</comment>
 			<search regex="false">
