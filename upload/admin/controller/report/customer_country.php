@@ -22,6 +22,12 @@ class ControllerReportCustomerCountry extends Controller {
 		} else {
 			$filter_order_status_id = 0;
 		}
+		
+		if (isset($this->request->get['filter_country_id'])) {
+			$filter_country_id = $this->request->get['filter_country_id'];
+		} else {
+			$filter_country_id = '';
+		}
 
 		if (isset($this->request->get['page'])) {
 			$page = $this->request->get['page'];
@@ -41,6 +47,10 @@ class ControllerReportCustomerCountry extends Controller {
 
 		if (isset($this->request->get['filter_order_status_id'])) {
 			$url .= '&filter_order_status_id=' . $this->request->get['filter_order_status_id'];
+		}
+		
+		if (isset($this->request->get['filter_country_id'])) {
+			$url .= '&filter_country_id=' . $this->request->get['filter_country_id'];
 		}
 
 		if (isset($this->request->get['page'])) {
@@ -66,6 +76,7 @@ class ControllerReportCustomerCountry extends Controller {
 		$filter_data = array(
 			'filter_date_start'	     => $filter_date_start,
 			'filter_date_end'	     => $filter_date_end,
+			'filter_country_id'		 => $filter_country_id,
 			'filter_order_status_id' => $filter_order_status_id,
 			'start'                  => ($page - 1) * $this->config->get('config_limit_admin'),
 			'limit'                  => $this->config->get('config_limit_admin')
@@ -79,6 +90,8 @@ class ControllerReportCustomerCountry extends Controller {
 			$data['customers'][] = array(
 				'name'       => $result['name'],
 				'count'          => $result['count'],
+				'zone'	 		 => $result['zone'],
+				'country_id'	 => $result['country_id'],
 				'total'          => $this->currency->format($result['total'], $this->config->get('config_currency')),
 			);
 		}
@@ -120,6 +133,10 @@ class ControllerReportCustomerCountry extends Controller {
 		if (isset($this->request->get['filter_order_status_id'])) {
 			$url .= '&filter_order_status_id=' . $this->request->get['filter_order_status_id'];
 		}
+		
+		if (isset($this->request->get['filter_country_id'])) {
+			$url .= '&filter_country_id=' . $this->request->get['filter_country_id'];
+		}
 
 		$pagination = new Pagination();
 		$pagination->total = $customer_total;
@@ -134,7 +151,8 @@ class ControllerReportCustomerCountry extends Controller {
 		$data['filter_date_start'] = $filter_date_start;
 		$data['filter_date_end'] = $filter_date_end;
 		$data['filter_order_status_id'] = $filter_order_status_id;
-
+		$data['filter_country_id'] = $filter_country_id;
+		
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');

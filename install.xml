@@ -62,12 +62,16 @@
 			<add position="before">
 				<![CDATA[
 					public function getCustomersCountry($data = array()) {
-						$sql = "SELECT SUM(o.total) as total, COUNT(" . DB_PREFIX . "country.country_id) AS count, " . DB_PREFIX . "country.name from " . DB_PREFIX . "customer INNER JOIN " . DB_PREFIX . "address ON (" . DB_PREFIX . "customer.customer_id = " . DB_PREFIX . "address.customer_id) INNER JOIN " . DB_PREFIX . "country ON (" . DB_PREFIX . "address.country_id = " . DB_PREFIX . "country.country_id) INNER JOIN " . DB_PREFIX . "order o ON (o.customer_id=" . DB_PREFIX . "customer.customer_id)";
+						//$sql = "SELECT SUM(o.total) as total, COUNT(" . DB_PREFIX . "country.country_id) AS count, " . DB_PREFIX . "country.name from " . DB_PREFIX . "customer INNER JOIN " . DB_PREFIX . "address ON (" . DB_PREFIX . "customer.customer_id = " . DB_PREFIX . "address.customer_id) INNER JOIN " . DB_PREFIX . "country ON (" . DB_PREFIX . "address.country_id = " . DB_PREFIX . "country.country_id) INNER JOIN " . DB_PREFIX . "order o ON (o.customer_id=" . DB_PREFIX . "customer.customer_id)";
 
-						if (!empty($data['filter_order_status_id'])) {
-							$sql .= " AND o.order_status_id = '" . (int)$data['filter_order_status_id'] . "'";
+		
+						$sql = "SELECT SUM(o.total) as total, o.payment_country_id as country_id, o.payment_zone as zone, COUNT(o.payment_country) AS count,
+							   o.payment_country as name from " . DB_PREFIX . "order o WHERE ";
+
+	 					if (!empty($data['filter_order_status_id'])) {
+							$sql .= " o.order_status_id = '" . (int)$data['filter_order_status_id'] . "'";
 						} else {
-							$sql .= " AND o.order_status_id > '0'";
+							$sql .= " o.order_status_id > '0'";
 						}
 
 						if (!empty($data['filter_date_start'])) {
@@ -86,9 +90,13 @@
 							if ($data['limit'] < 1) {
 								$data['limit'] = 20;
 							}
+					 	}
 
-							//$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
-							$sql .= "GROUP BY " . DB_PREFIX . "country.country_id";
+						if (!empty($data['filter_country_id'])) {
+							$sql .= " AND o.payment_country_id ='" . $data['filter_country_id'] . "' GROUP BY o.payment_zone_id";
+						}
+						else {
+							$sql .= " GROUP BY o.payment_country";
 						}
 
 						$query = $this->db->query($sql);

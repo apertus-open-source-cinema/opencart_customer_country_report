@@ -65,12 +65,16 @@
             </thead>
             <tbody>
               <?php if ($customers) { ?>
+			  <?php if ($filter_country_id != "") { ?>
+					<td class="text-left"><b><?php echo $customers[0]['name']; ?></b> - <a href="<?php echo "index.php?route=report/customer_country&token=".$token; ?>">BACK</td><td></td><td></td>
+              <?php }  ?>
               <?php foreach ($customers as $customer) { ?>
               <tr>
-			  <?php
-			  //$customer['total'] = 0;
-			  ?>
-                <td class="text-left"><?php echo $customer['name']; ?></td>
+				<?php if ($filter_country_id != "") { ?>
+					<td class="text-left"><?php echo $customer['name']." - ".$customer['zone']; ?></td>
+                <?php } else { ?>
+					<td class="text-left"><a href="<?php echo "index.php?route=report/customer_country&token=".$token."&filter_country_id=".$customer['country_id'] ?> "><?php echo $customer['name']; ?></a></td></td>
+                <?php } ?>
                 <td class="text-right"><?php echo $customer['count']; ?></td>
                 <td class="text-right"><?php echo $customer['total']; ?></td>
               </tr>
