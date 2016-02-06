@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
 	<name>Customer Country Report</name>
-	<code>default</code>
+	<code>CustomerCountryReport1.0</code>
 	<version>1.0</version>
 	<author>Sebastian Pichelhofer</author>
 	<link>https://github.com/apertus-open-source-cinema/opencart_customer_country_report</link>

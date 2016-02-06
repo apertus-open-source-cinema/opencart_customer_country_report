@@ -66,14 +66,34 @@
             <tbody>
               <?php if ($customers) { ?>
 			  <?php if ($filter_country_id != "") { ?>
-					<td class="text-left"><b><?php echo $customers[0]['name']; ?></b> - <a href="<?php echo "index.php?route=report/customer_country&token=".$token; ?>">BACK</td><td></td><td></td>
+			  <?php
+				$back_url = "index.php?route=report/customer_country&token=".$token;
+				if ($filter_date_start != "")
+					$back_url .= "&filter_date_start=".$filter_date_start;
+				if ($filter_date_end != "")
+					$back_url .= "&filter_date_end=".$filter_date_end;
+				if ($filter_order_status_id != "")
+					$back_url .= "&filter_order_status_id=".$filter_order_status_id;	
+					
+				?>
+				    <tr><td class="text-left" colspan="3"><a class="btn btn-info" href="<?php echo $back_url; ?>"><i class="fa fa-arrow-left"></i> BACK</a></td></tr>
+					<tr><td style="background-color:#f5f5f5; padding-top:15px; padding-left:15px;" class="text-left" colspan="3"><h3><i class="fa fa-flag"> <?php echo $customers[0]['name']; ?></h3></td>
               <?php }  ?>
               <?php foreach ($customers as $customer) { ?>
               <tr>
 				<?php if ($filter_country_id != "") { ?>
-					<td class="text-left"><?php echo $customer['name']." - ".$customer['zone']; ?></td>
+					<td class="text-left"><?php echo $customer['zone']; ?></td>
                 <?php } else { ?>
-					<td class="text-left"><a href="<?php echo "index.php?route=report/customer_country&token=".$token."&filter_country_id=".$customer['country_id'] ?> "><?php echo $customer['name']; ?></a></td></td>
+					<?php
+					$country_url = "index.php?route=report/customer_country&token=".$token."&filter_country_id=".$customer['country_id'];
+					if ($filter_date_start != "")
+						$country_url .= "&filter_date_start=".$filter_date_start;
+					if ($filter_date_end != "")
+						$country_url .= "&filter_date_end=".$filter_date_end;
+					if ($filter_order_status_id != "")
+						$country_url .= "&filter_order_status_id=".$filter_order_status_id;	
+					?>
+					<td class="text-left"><a href="<?php echo $country_url; ?>"><?php echo $customer['name']; ?></a></td></td>
                 <?php } ?>
                 <td class="text-right"><?php echo $customer['count']; ?></td>
                 <td class="text-right"><?php echo $customer['total']; ?></td>
@@ -96,7 +116,11 @@
   </div>
   <script type="text/javascript"><!--
 $('#button-filter').on('click', function() {
-	url = 'index.php?route=report/customer_country&token=<?php echo $token; ?>';
+	<?php if(isset($filter_country_id)) { ?>
+		url = 'index.php?route=report/customer_country&token=<?php echo $token; ?>&filter_country_id=<?php echo $filter_country_id; ?>';
+	<?php }	else { ?>
+		url = 'index.php?route=report/customer_country&token=<?php echo $token; ?>';
+	<?php } ?>
 	
 	var filter_date_start = $('input[name=\'filter_date_start\']').val();
 	
